@@ -39,7 +39,7 @@ defmodule Phoenix.LiveView.Components.MultiSelect do
             id: integer,
             label: String.t(),
             selected: boolean,
-            reference: any
+            reference: any()
           }
 
     def new(%{} = map) do
@@ -261,7 +261,7 @@ defmodule Phoenix.LiveView.Components.MultiSelect do
   @doc false
   def render(assigns) do
     ~H"""
-    <div id={@id} style={} class={build_class([@class, css(@id, :component)])} {@top_rest}>
+    <div id={@id} class={build_class([@class, css(@id, :component)])} {@top_rest}>
       <div id={@id <> "-main"} tabindex="0" class={css(@id, :main, true)} title={@title} {@main_rest}>
         <div
           id={@id <> "-tags"}
@@ -512,14 +512,11 @@ defmodule Phoenix.LiveView.Components.MultiSelect do
 
   @doc false
   def build_class(str) when is_binary(str), do: str
-  def build_class([]), do: ""
-  def build_class([h | t]) when h in [nil, ""], do: build_class(t)
-  def build_class([h | t]) when t in [nil, [nil], [""]], do: h
-  def build_class([h]) when is_binary(h), do: h
 
-  def build_class([h | t]) do
-    tail = for i <- t, i && i != "", do: [32, i]
-    IO.iodata_to_binary([h | tail])
+  def build_class(list) when is_list(list) do
+    list
+    |> Enum.filter(&(&1 && &1 != ""))
+    |> Enum.join(" ")
   end
 
   attr(:id, :string, default: nil)
